@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -114,9 +115,28 @@ namespace Illumine
             });
         }
 
-        private void SearchResults_Load(object sender, System.EventArgs e)
+        private void ResultsFileList_MouseDoubleClick(object sender, MouseEventArgs e)
         {
+            if (ResultsFileList.SelectedIndex < 0)
+            {
+                return;
+            }
 
+            string[] parts = ResultsFileList.SelectedItem.ToString().Split("  ||  ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
+            string fname = parts[0];
+            string path = parts[1].TrimEnd('\\');
+            string fullPath = path + '\\' + fname;
+
+            // Really what we want to do here is call searchbar.LoseFocus(), but trying to get access to the
+            // instance requires casting it to a Searchbar, which initializes the keybind again for some reason?
+            Form searchbar = (Form)Application.OpenForms["Searchbar"];
+            searchbar.TopMost = false;
+            Searchbar.SetWindowPos(searchbar.Handle, new IntPtr(1), 0, 0, 0, 0, (uint)(0x0010 | 0x0001 | 0x0002));
+            
+            Utils.ShellUtils.OpenPathWithDefaultApp(fullPath);
+
+            Close();
+            Dispose();
         }
     }
 }

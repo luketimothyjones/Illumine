@@ -29,7 +29,7 @@ namespace Illumine
         [DllImport("user32.dll")]
         static extern bool SetForegroundWindow(IntPtr hWnd);
         [DllImport("user32.dll")]
-        static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
+        public static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
         [DllImport("user32.dll")]
         static extern IntPtr GetDesktopWindow();
         #endregion
@@ -165,14 +165,15 @@ namespace Illumine
             }
         }
 
-        private void TakeFocus()
+        public void TakeFocus()
         {
             SetWindowPos(mainWindow, HWND_TOP, 0, 0, 0, 0, (uint)(WindowPosAttr.NOMOVE | WindowPosAttr.NOSIZE));
             ActiveControl = SearchInput;
+            SearchInput.Text = "";
             SetForegroundWindow(mainWindow);
         }
 
-        private void LoseFocus()
+        public void LoseFocus()
         {
             ActiveControl = null;
             SearchInput.Text = "";
@@ -337,7 +338,7 @@ namespace Illumine
 
             if (SearchInput.Text != "")
             {
-                if (searchResults == null)
+                if (searchResults == null || searchResults.IsDisposed)
                 {
                     searchResults = new SearchResults();
                     searchResults.Show();

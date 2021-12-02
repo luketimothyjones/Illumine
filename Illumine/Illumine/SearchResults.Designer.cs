@@ -47,6 +47,7 @@ namespace Illumine
             this.ResultsFileList.TabIndex = 1;
             this.ResultsFileList.DrawItem += new System.Windows.Forms.DrawItemEventHandler(this.SearchResults_DrawItem);
             this.ResultsFileList.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ResultsFileList_KeyDown);
+            this.ResultsFileList.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.ResultsFileList_MouseDoubleClick);
             // 
             // SearchResults
             // 
@@ -68,7 +69,6 @@ namespace Illumine
             this.TransparencyKey = System.Drawing.Color.Black;
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SearchResults_FormClosing);
-            this.Load += new System.EventHandler(this.SearchResults_Load);
             this.VisibleChanged += new System.EventHandler(this.SearchResults_VisibleChanged);
             this.ResumeLayout(false);
 

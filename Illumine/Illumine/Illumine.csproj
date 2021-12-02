@@ -92,6 +92,7 @@
     <Compile Include="Backdrop.Designer.cs">
       <DependentUpon>Backdrop.cs</DependentUpon>
     </Compile>
+    <Compile Include="ShellUtils.cs" />
     <Compile Include="KeybindSetter.cs">
       <SubType>Form</SubType>
     </Compile>
