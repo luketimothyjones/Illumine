@@ -91,7 +91,6 @@ namespace Illumine
 
             keybindSetter = new KeybindSetter();
             keybindSetter.RegisterCallback(SetHotkey);
-            keybindSetter.Show();
 
             searchEngine = new SearchEngine();
         }
