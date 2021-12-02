@@ -49,10 +49,12 @@ namespace Illumine
         // ====
         private readonly IntPtr mainWindow;
         private SearchResults searchResults = null;
-        private int searchResultsDisplayLimit = 150;
+        private readonly int searchResultsDisplayLimit = 150;
 
         // We need this to be defined for proper disposal
-        private readonly GlobalHotkeys.GlobalHotkeys showHotkey;
+        private Dictionary<string, int> keybind;
+        private GlobalHotkeys.GlobalHotkeys showHotkey;
+        private readonly KeybindSetter keybindSetter;
 
         private readonly SearchEngine searchEngine;
         private static readonly List<Keys> searchInputIgnoreKeys = new List<Keys>() { Keys.Left, Keys.Right, Keys.Home, Keys.End, Keys.Escape };
@@ -78,7 +80,18 @@ namespace Illumine
             // Capture ESC regardless of control focus
             KeyPreview = true;
 
-            showHotkey = new GlobalHotkeys.GlobalHotkeys(GlobalHotkeys.Modifiers.Ctrl | GlobalHotkeys.Modifiers.Win, Keys.OemPeriod, this, true);
+            // TODO :: Set with config file
+            keybind = new Dictionary<string, int>()
+            {
+                { "keys", (int)Keys.OemPeriod },
+                { "mods", (int)(GlobalHotkeys.Modifiers.Ctrl | GlobalHotkeys.Modifiers.Win) }
+            };
+
+            showHotkey = new GlobalHotkeys.GlobalHotkeys((GlobalHotkeys.Modifiers)keybind["mods"], (Keys)keybind["keys"], this, true);
+
+            keybindSetter = new KeybindSetter();
+            keybindSetter.RegisterCallback(SetHotkey);
+            keybindSetter.Show();
 
             searchEngine = new SearchEngine();
         }
@@ -115,6 +128,12 @@ namespace Illumine
                 ToolStripMenuItem tsmiSelectAll = new ToolStripMenuItem("Select All");
                 tsmiSelectAll.Click += (sender, e) => SearchInput.SelectAll();
                 contextMenu.Items.Add(tsmiSelectAll);
+
+                contextMenu.Items.Add(new ToolStripSeparator());
+
+                ToolStripMenuItem tsmiSetKeybind = new ToolStripMenuItem("Set Keybind");
+                tsmiSetKeybind.Click += (sender, e) => keybindSetter.Show();
+                contextMenu.Items.Add(tsmiSetKeybind);
 
                 contextMenu.Items.Add(new ToolStripSeparator());
 
@@ -193,12 +212,11 @@ namespace Illumine
             // This gets called when any global hotkey is pressed, so we need to filter the messages to ensure we're the handler
             if (m.Msg == GlobalHotkeys.Constants.WM_HOTKEY_MSG_ID)
             {
-                // Bitshift magic to get key codes
+                // Bitmask magic to get key codes
                 int keyCode = ((int)m.LParam >> 16) & 0xFFFF;
                 int modifierKeys = (int)m.LParam & 0xFFFF;
 
-                if (keyCode == (int)Keys.OemPeriod &&
-                modifierKeys == (GlobalHotkeys.Constants.CTRL | GlobalHotkeys.Constants.WIN))  // Tested, works for both L&R WIN
+                if (keyCode == keybind["keys"] && modifierKeys == keybind["mods"])  // LWin and RWin are treated as the same
                 {
                     if (TopMost)
                     {

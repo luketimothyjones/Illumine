@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace GlobalHotkeys
@@ -12,18 +13,38 @@ namespace GlobalHotkeys
         Shift = 0x0004,
         Win = 0x0008
     }
+
     public static class Constants
     {
-        //modifiers
+        // Modifiers
         public const int NOMOD = 0x0000;
         public const int ALT = 0x0001;
         public const int CTRL = 0x0002;
         public const int SHIFT = 0x0004;
         public const int WIN = 0x0008;
 
-        //windows message id for hotkey
+        // Windows message id for hotkeys
         public const int WM_HOTKEY_MSG_ID = 0x0312;
     }
+
+    public static class ModifierKeysToGlobalHotkeys
+    {
+        // For whatever reason Microsoft doesn't call some keys what they are, so we
+        // need to make it mesh up with our sensical code.
+        private readonly static Dictionary<int, int> lookupTable = new Dictionary<int, int>()
+        {
+            { (int)Keys.ShiftKey, Constants.SHIFT },
+            { (int)Keys.ControlKey, Constants.CTRL },
+            { (int)Keys.Menu, Constants.ALT },
+            { (int)Keys.LWin, Constants.WIN },
+            { (int)Keys.RWin, Constants.WIN }
+        };
+
+        public static int Convert(Keys key)
+        {
+            return lookupTable[(int)key];
+        }
+    };
 
     public class GlobalHotkeys : IDisposable
     {
@@ -103,6 +124,4 @@ namespace GlobalHotkeys
         public GlobalHotkeysException(string message) : base(message) { }
         public GlobalHotkeysException(string message, Exception inner) : base(message, inner) { }
     }
-
-
 }

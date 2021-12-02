@@ -92,6 +92,12 @@
     <Compile Include="Backdrop.Designer.cs">
       <DependentUpon>Backdrop.cs</DependentUpon>
     </Compile>
+    <Compile Include="KeybindSetter.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="KeybindSetter.Designer.cs">
+      <DependentUpon>KeybindSetter.cs</DependentUpon>
+    </Compile>
     <Compile Include="SearchEngine.cs" />
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="SearchResults.cs">
@@ -110,6 +116,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Backdrop.resx">
       <DependentUpon>Backdrop.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="KeybindSetter.resx">
+      <DependentUpon>KeybindSetter.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SearchResults.resx">
       <DependentUpon>SearchResults.cs</DependentUpon>
