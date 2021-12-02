@@ -153,6 +153,7 @@ namespace Illumine
             }
         }
 
+        #region Window position and focus handling
         protected override CreateParams CreateParams
         {
             // Hide window from ALT+TAB
@@ -207,6 +208,81 @@ namespace Illumine
             SetWindowPos(mainWindow, HWND_BOTTOM, 0, 0, 0, 0, (uint)(WindowPosAttr.NOACTIVATE | WindowPosAttr.NOMOVE | WindowPosAttr.NOSIZE));
         }
 
+        private void Searchbar_VisibleChanged(object sender, EventArgs e)
+        {
+            // Send to back of window stack on load
+            WindowState = FormWindowState.Minimized;
+            SendWindowToBack();
+        }
+
+        private void Searchbar_SizeChanged(object sender, EventArgs e)
+        {
+            // Reset to normal size on size change (minimize/maximize)
+            if (WindowState != FormWindowState.Normal)
+            {
+                WindowState = FormWindowState.Normal;
+            }
+        }
+
+        private void Searchbar_Load(object sender, EventArgs e)
+        {
+            // Hide caret by focusing hidden label
+            Top = 20;
+            ActiveControl = FocusThiefLabel;
+            SendWindowToBack();
+        }
+
+        private void Searchbar_Deactivate(object sender, EventArgs e)
+        {
+            if (!ContainsFocus && (searchResults == null || !searchResults.ContainsFocus))
+            {
+                LoseFocus();
+            }
+        }
+
+        private void Searchbar_Click(object sender, EventArgs e)
+        {
+            TakeFocus();
+        }
+
+        #endregion
+
+        private bool SetHotkey(HashSet<Keys> hotkey)
+        {
+            Dictionary<string, int> oldKeybind = new Dictionary<string, int>(keybind);
+            keybind["keys"] = 0;
+            keybind["mods"] = 0;
+
+            foreach (Keys k in hotkey)
+            {
+                // Is a modifier, needs to be converted
+                if (k == Keys.ShiftKey || k == Keys.ControlKey || k == Keys.Menu || k == Keys.LWin || k == Keys.RWin)
+                {
+                    keybind["mods"] |= GlobalHotkeys.ModifierKeysToGlobalHotkeys.Convert(k);
+                }
+                else
+                {
+                    keybind["keys"] |= (int)k;
+                }
+            }
+
+            showHotkey.Unregister();
+            showHotkey.Dispose();
+
+            try
+            {
+                showHotkey = new GlobalHotkeys.GlobalHotkeys((GlobalHotkeys.Modifiers)keybind["mods"], (Keys)keybind["keys"], this, true);
+            }
+            catch (GlobalHotkeys.GlobalHotkeysException)
+            {
+                keybind = oldKeybind;
+                showHotkey = new GlobalHotkeys.GlobalHotkeys((GlobalHotkeys.Modifiers)keybind["mods"], (Keys)keybind["keys"], this, true);
+                return false;
+            }
+
+            return true;
+        }
+
         protected override void WndProc(ref Message m)
         {
             // This gets called when any global hotkey is pressed, so we need to filter the messages to ensure we're the handler
@@ -251,43 +327,6 @@ namespace Illumine
             }
 
             LoseFocus();
-        }
-
-        private void Searchbar_VisibleChanged(object sender, EventArgs e)
-        {
-            // Send to back of window stack on load
-            WindowState = FormWindowState.Minimized;
-            SendWindowToBack();
-        }
-
-        private void Searchbar_SizeChanged(object sender, EventArgs e)
-        {
-            // Reset to normal size on size change (minimize/maximize)
-            if (WindowState != FormWindowState.Normal)
-            {
-                WindowState = FormWindowState.Normal;
-            }
-        }
-
-        private void Searchbar_Load(object sender, EventArgs e)
-        {
-            // Hide caret by focusing hidden label
-            Top = 20;
-            ActiveControl = FocusThiefLabel;
-            SendWindowToBack();
-        }
-
-        private void Searchbar_Deactivate(object sender, EventArgs e)
-        {
-            if (!ContainsFocus && (searchResults == null || !searchResults.ContainsFocus))
-            {
-                LoseFocus();
-            }
-        }
-
-        private void Searchbar_Click(object sender, EventArgs e)
-        {
-            TakeFocus();
         }
 
         private void SearchInput_KeyUp(object sender, KeyEventArgs e)
