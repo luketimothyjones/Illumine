@@ -12,6 +12,6 @@ Controls:
 
 - CTRL + WIN + Period (full-stop) to focus the searchbar above other windows, otherwise it lives on your desktop.
 
-  - The keybind can be changed by right-clicking the searchbar, but custom keybinds are not currently saved.
+  - The keybind can be changed by right-clicking the searchbar, but custom keybinds are not saved between restarts at this time.
 
 - Double-click to open files.
