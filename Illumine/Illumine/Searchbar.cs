@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Collections.Generic;
@@ -11,40 +10,6 @@ namespace Illumine
     public partial class Searchbar : Form
     {
         public CancellationTokenSource resultListUpdateCancelHandler = null;
-
-        #region user32 Imports
-        [DllImport("Gdi32.dll", EntryPoint = "CreateRoundRectRgn")]
-        private static extern IntPtr CreateRoundRectRgn
-        (
-            int nLeftRect,
-            int nTopRect,
-            int nRightRect,
-            int nBottomRect,
-            int nWidthEllipse,
-            int nHeightEllipse
-        );
-
-        [DllImport("user32.dll")]
-        static extern int SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
-        [DllImport("user32.dll")]
-        static extern bool SetForegroundWindow(IntPtr hWnd);
-        [DllImport("user32.dll")]
-        public static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
-        [DllImport("user32.dll")]
-        static extern IntPtr GetDesktopWindow();
-        #endregion
-
-        // ========
-        static readonly IntPtr HWND_TOP = new IntPtr(0);
-        static readonly IntPtr HWND_BOTTOM = new IntPtr(1);
-
-        [Flags]
-        private enum WindowPosAttr : UInt32
-        {
-            NOSIZE = 0x0001,
-            NOMOVE = 0x0002,
-            NOACTIVATE = 0x0010
-        }
 
         // ====
         private readonly IntPtr mainWindow;
@@ -68,11 +33,11 @@ namespace Illumine
             ShowOnScreen(0);
 
             // Round the corners
-            Region = Region.FromHrgn(CreateRoundRectRgn(0, 0, Width, Height, 20, 20));
+            Region = Region.FromHrgn(WinDisplayFuncs.CreateRoundRectRgn(0, 0, Width, Height, 20, 20));
 
             // Glue the searchbar window to the desktop
             mainWindow = Handle;
-            SetParent(mainWindow, GetDesktopWindow());
+            WinDisplayFuncs.SetParent(mainWindow, WinDisplayFuncs.GetDesktopWindow());
 
             SearchInput.SelectionAlignment = HorizontalAlignment.Center;
             AddSearchInputContextMenu();
@@ -167,10 +132,11 @@ namespace Illumine
 
         public void TakeFocus()
         {
-            SetWindowPos(mainWindow, HWND_TOP, 0, 0, 0, 0, (uint)(WindowPosAttr.NOMOVE | WindowPosAttr.NOSIZE));
+            WinDisplayFuncs.SetWindowPos(mainWindow, WinDisplayFuncs.HWND_TOP, 0, 0, 0, 0,
+                                         (uint)(WinDisplayFuncs.WindowPosAttr.NOMOVE | WinDisplayFuncs.WindowPosAttr.NOSIZE));
             ActiveControl = SearchInput;
             SearchInput.Text = "";
-            SetForegroundWindow(mainWindow);
+            WinDisplayFuncs.SetForegroundWindow(mainWindow);
         }
 
         public void LoseFocus()
@@ -205,7 +171,8 @@ namespace Illumine
         private void SendWindowToBack()
         {
             // Pin searchbar to lowest z-index
-            SetWindowPos(mainWindow, HWND_BOTTOM, 0, 0, 0, 0, (uint)(WindowPosAttr.NOACTIVATE | WindowPosAttr.NOMOVE | WindowPosAttr.NOSIZE));
+            WinDisplayFuncs.SetWindowPos(mainWindow, WinDisplayFuncs.HWND_BOTTOM, 0, 0, 0, 0,
+                                         (uint)(WinDisplayFuncs.WindowPosAttr.NOACTIVATE | WinDisplayFuncs.WindowPosAttr.NOMOVE | WinDisplayFuncs.WindowPosAttr.NOSIZE));
         }
 
         private void Searchbar_VisibleChanged(object sender, EventArgs e)
