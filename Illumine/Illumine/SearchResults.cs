@@ -131,7 +131,8 @@ namespace Illumine
             // instance requires casting it to a Searchbar, which initializes the keybind again for some reason?
             Form searchbar = (Form)Application.OpenForms["Searchbar"];
             searchbar.TopMost = false;
-            WinDisplayFuncs.SetWindowPos(searchbar.Handle, new IntPtr(1), 0, 0, 0, 0, (uint)(0x0010 | 0x0001 | 0x0002));
+            WinDisplayFuncs.SetWindowPos(searchbar.Handle, WinDisplayFuncs.HWND_BOTTOM, 0, 0, 0, 0,
+                                         (uint)(WinDisplayFuncs.WindowPosAttr.NOACTIVATE | WinDisplayFuncs.WindowPosAttr.NOMOVE | WinDisplayFuncs.WindowPosAttr.NOSIZE));
             
             Utils.ShellUtils.OpenPathWithDefaultApp(fullPath);
 
