@@ -8,7 +8,7 @@ namespace Illumine
 	{
 		public static class StatusCodes
 		{
-			public enum Codes
+			public enum Code
 			{
 				OK = 0,
 				ERROR_MEMORY = 1,
@@ -22,16 +22,16 @@ namespace Illumine
 
 			public static string TranslateStatusCode(uint code)
 			{
-				return (Codes)code switch
+				return (Code)code switch
 				{
-					Codes.OK => "The operation completed successfully.",
-					Codes.ERROR_MEMORY => "Failed to allocate memory for the search query.",
-					Codes.ERROR_IPC => "IPC is not available.",
-					Codes.ERROR_REGISTERCLASSEX => "Failed to register the search query window class.",
-					Codes.ERROR_CREATEWINDOW => "Failed to create the search query window.",
-					Codes.ERROR_CREATETHREAD => "Failed to create the search query thread.",
-					Codes.ERROR_INVALIDINDEX => "Invalid index. The index must be greater or equal to 0 and less than the number of visible results.",
-					Codes.ERROR_INVALIDCALL => "Invalid call.",
+					Code.OK => "The operation completed successfully.",
+					Code.ERROR_MEMORY => "Failed to allocate memory for the search query.",
+					Code.ERROR_IPC => "IPC is not available.",
+					Code.ERROR_REGISTERCLASSEX => "Failed to register the search query window class.",
+					Code.ERROR_CREATEWINDOW => "Failed to create the search query window.",
+					Code.ERROR_CREATETHREAD => "Failed to create the search query thread.",
+					Code.ERROR_INVALIDINDEX => "Invalid index. The index must be greater or equal to 0 and less than the number of visible results.",
+					Code.ERROR_INVALIDCALL => "Invalid call.",
 					_ => throw new ArgumentException("Invalid code")
 				};
 			}
