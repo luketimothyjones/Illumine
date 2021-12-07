@@ -72,36 +72,36 @@ namespace Illumine
         {
             if (SearchInput.ContextMenuStrip == null)
             {
-                ContextMenuStrip contextMenu = new ContextMenuStrip()
+                ContextMenuStrip contextMenu = new()
                 {
                     ShowImageMargin = false
                 };
 
-                ToolStripMenuItem tsmiCut = new ToolStripMenuItem("Cut");
+                ToolStripMenuItem tsmiCut = new("Cut");
                 tsmiCut.Click += (sender, e) => SearchInput.Cut();
                 contextMenu.Items.Add(tsmiCut);
 
-                ToolStripMenuItem tsmiCopy = new ToolStripMenuItem("Copy");
+                ToolStripMenuItem tsmiCopy = new("Copy");
                 tsmiCopy.Click += (sender, e) => SearchInput.Copy();
                 contextMenu.Items.Add(tsmiCopy);
 
-                ToolStripMenuItem tsmiPaste = new ToolStripMenuItem("Paste");
+                ToolStripMenuItem tsmiPaste = new("Paste");
                 tsmiPaste.Click += (sender, e) => SearchInput.Paste();
                 contextMenu.Items.Add(tsmiPaste);
 
-                ToolStripMenuItem tsmiSelectAll = new ToolStripMenuItem("Select All");
+                ToolStripMenuItem tsmiSelectAll = new("Select All");
                 tsmiSelectAll.Click += (sender, e) => SearchInput.SelectAll();
                 contextMenu.Items.Add(tsmiSelectAll);
 
                 contextMenu.Items.Add(new ToolStripSeparator());
 
-                ToolStripMenuItem tsmiSetKeybind = new ToolStripMenuItem("Set Keybind");
+                ToolStripMenuItem tsmiSetKeybind = new("Set Keybind");
                 tsmiSetKeybind.Click += (sender, e) => keybindSetter.Show();
                 contextMenu.Items.Add(tsmiSetKeybind);
 
                 contextMenu.Items.Add(new ToolStripSeparator());
 
-                ToolStripMenuItem tsmiExit = new ToolStripMenuItem("Exit");
+                ToolStripMenuItem tsmiExit = new("Exit");
                 tsmiExit.Click += (sender, e) => ExitCleanup();
                 contextMenu.Items.Add(tsmiExit);
 
