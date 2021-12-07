@@ -23,6 +23,7 @@ namespace Illumine
             results = new BindingList<string>();
             ResultsFileList.DataSource = results;
 
+            // TODO :: Calculate center here
             ResultsFileList.Top = 400;
             ResultsFileList.Left = 300;
         }
@@ -127,17 +128,9 @@ namespace Illumine
             string path = parts[1].TrimEnd('\\');
             string fullPath = path + '\\' + fname;
 
-            // Really what we want to do here is call searchbar.LoseFocus(), but trying to get access to the
-            // instance requires casting it to a Searchbar, which initializes the keybind again for some reason?
-            Form searchbar = (Form)Application.OpenForms["Searchbar"];
-            searchbar.TopMost = false;
-            WinDisplayFuncs.SetWindowPos(searchbar.Handle, WinDisplayFuncs.HWND_BOTTOM, 0, 0, 0, 0,
-                                         (uint)(WinDisplayFuncs.WindowPosAttr.NOACTIVATE | WinDisplayFuncs.WindowPosAttr.NOMOVE | WinDisplayFuncs.WindowPosAttr.NOSIZE));
-            
             Utils.ShellUtils.OpenPathWithDefaultApp(fullPath);
 
             Close();
-            Dispose();
         }
     }
 }

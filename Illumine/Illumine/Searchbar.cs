@@ -22,7 +22,7 @@ namespace Illumine
         private readonly KeybindSetter keybindSetter;
 
         private readonly SearchEngine searchEngine;
-        private static readonly List<Keys> searchInputIgnoreKeys = new List<Keys>() { Keys.Left, Keys.Right, Keys.Home, Keys.End, Keys.Escape };
+        private static readonly List<Keys> searchInputIgnoreKeys = new() { Keys.Left, Keys.Right, Keys.Home, Keys.End, Keys.Escape };
 
         // ========
         public Searchbar()
@@ -118,6 +118,7 @@ namespace Illumine
         }
 
         #region Window position and focus handling
+
         protected override CreateParams CreateParams
         {
             // Hide window from ALT+TAB
@@ -216,7 +217,7 @@ namespace Illumine
 
         private bool SetHotkey(HashSet<Keys> hotkey)
         {
-            Dictionary<string, int> oldKeybind = new Dictionary<string, int>(keybind);
+            Dictionary<string, int> oldKeybind = new(keybind);
             keybind["keys"] = 0;
             keybind["mods"] = 0;
 
@@ -290,8 +291,14 @@ namespace Illumine
             if (searchResults != null)
             {
                 searchResults.Close();
-                searchResults = null;
             }
+        }
+
+        public void HandleResultsClose(object sender, EventArgs e)
+        {
+            searchResults.FormClosed -= HandleResultsClose;
+            searchResults.Dispose();
+            searchResults = null;
 
             LoseFocus();
         }
@@ -308,6 +315,7 @@ namespace Illumine
                 if (searchResults == null || searchResults.IsDisposed)
                 {
                     searchResults = new SearchResults();
+                    searchResults.FormClosed += HandleResultsClose;
                     searchResults.Show();
 
                     // Receive keypresses from results file list
