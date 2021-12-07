@@ -213,6 +213,15 @@ namespace Illumine
             TakeFocus();
         }
 
+        public void HandleResultsClose(object sender, EventArgs e)
+        {
+            searchResults.FormClosed -= HandleResultsClose;
+            searchResults.Dispose();
+            searchResults = null;
+
+            LoseFocus();
+        }
+
         #endregion
 
         private bool SetHotkey(HashSet<Keys> hotkey)
@@ -292,15 +301,6 @@ namespace Illumine
             {
                 searchResults.Close();
             }
-        }
-
-        public void HandleResultsClose(object sender, EventArgs e)
-        {
-            searchResults.FormClosed -= HandleResultsClose;
-            searchResults.Dispose();
-            searchResults = null;
-
-            LoseFocus();
         }
 
         private void SearchInput_KeyUp(object sender, KeyEventArgs e)
