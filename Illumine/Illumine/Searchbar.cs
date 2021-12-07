@@ -29,8 +29,7 @@ namespace Illumine
         {
             InitializeComponent();
 
-            // TODO :: Set with config file
-            ShowOnScreen(0);
+            ShowOnScreen(Properties.Settings.Default.DefaultMonitor);
 
             // Round the corners
             Region = Region.FromHrgn(WinDisplayFuncs.CreateRoundRectRgn(0, 0, Width, Height, 20, 20));
@@ -45,17 +44,32 @@ namespace Illumine
             // Capture ESC regardless of control focus
             KeyPreview = true;
 
-            // TODO :: Set with config file
             keybind = new Dictionary<string, int>()
             {
-                { "keys", (int)Keys.OemPeriod },
-                { "mods", (int)(GlobalHotkeys.Modifiers.Ctrl | GlobalHotkeys.Modifiers.Win) }
+                { "keys", Properties.Settings.Default.KeybindKeys },  // (int)Keys.OemPeriod
+                { "mods", Properties.Settings.Default.KeybindMods }   // (int)(GlobalHotkeys.Modifiers.Ctrl | GlobalHotkeys.Modifiers.Win)
             };
 
-            showHotkey = new GlobalHotkeys.GlobalHotkeys((GlobalHotkeys.Modifiers)keybind["mods"], (Keys)keybind["keys"], this, true);
+            try
+            {
+                showHotkey = new GlobalHotkeys.GlobalHotkeys((GlobalHotkeys.Modifiers)keybind["mods"], (Keys)keybind["keys"], this, true);
+            }
+            catch (GlobalHotkeys.GlobalHotkeysException)
+            {
+                keybind["keys"] = (int)Keys.OemPeriod;
+                keybind["mods"] = (int)(GlobalHotkeys.Modifiers.Ctrl | GlobalHotkeys.Modifiers.Win);
+
+                Properties.Settings.Default.KeybindKeys = keybind["keys"];
+                Properties.Settings.Default.KeybindMods = keybind["mods"];
+                Properties.Settings.Default.Save();
+
+                showHotkey = new GlobalHotkeys.GlobalHotkeys((GlobalHotkeys.Modifiers)keybind["mods"], (Keys)keybind["keys"], this, true);
+
+                MessageBox.Show("Keybind in user settings was invalid, it has been reset to CTRL + WIN + Period (full-stop)", "Invalid keybind", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
 
             keybindSetter = new KeybindSetter();
-            keybindSetter.RegisterCallback(SetHotkey);
+            keybindSetter.RegisterCallback(HotkeySetCallback);
 
             searchEngine = new SearchEngine();
         }
@@ -224,7 +238,7 @@ namespace Illumine
 
         #endregion
 
-        private bool SetHotkey(HashSet<Keys> hotkey)
+        private bool HotkeySetCallback(HashSet<Keys> hotkey)
         {
             Dictionary<string, int> oldKeybind = new(keybind);
             keybind["keys"] = 0;
@@ -256,6 +270,10 @@ namespace Illumine
                 showHotkey = new GlobalHotkeys.GlobalHotkeys((GlobalHotkeys.Modifiers)keybind["mods"], (Keys)keybind["keys"], this, true);
                 return false;
             }
+
+            Properties.Settings.Default.KeybindKeys = keybind["keys"];
+            Properties.Settings.Default.KeybindMods = keybind["mods"];
+            Properties.Settings.Default.Save();
 
             return true;
         }

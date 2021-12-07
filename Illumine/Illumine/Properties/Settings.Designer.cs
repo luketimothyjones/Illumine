@@ -22,5 +22,41 @@ namespace Illumine.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("190")]
+        public int KeybindKeys {
+            get {
+                return ((int)(this["KeybindKeys"]));
+            }
+            set {
+                this["KeybindKeys"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("10")]
+        public int KeybindMods {
+            get {
+                return ((int)(this["KeybindMods"]));
+            }
+            set {
+                this["KeybindMods"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int DefaultMonitor {
+            get {
+                return ((int)(this["DefaultMonitor"]));
+            }
+            set {
+                this["DefaultMonitor"] = value;
+            }
+        }
     }
 }
