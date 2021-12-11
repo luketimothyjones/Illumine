@@ -46,7 +46,7 @@ namespace Illumine
         {
             chosenKeys.Add(e.KeyCode);
 
-            List<(string, string)> replacePairs = new List<(string, string)>()
+            List<(string, string)> replacePairs = new()
             {
                 { ("Oem", "") }, { ("Key", "") }, { ("Menu", "Alt") }, { ("LWin", "Win") }, { ("RWin", "Win") },
             };
