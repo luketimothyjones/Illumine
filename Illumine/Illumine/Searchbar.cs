@@ -374,23 +374,11 @@ namespace Illumine
 
         public void SearchEngineCallback(ValueTuple<long, List<SearchResult>> results)
         {
-            searchResults.PauseResultsListUpdates();
-
             searchResults.results.Clear();
-            for (int i = 0; i < Math.Min(searchResultsDisplayLimit, results.Item2.Count); i++)
-            {
-                SearchResult result = results.Item2[i];
-                searchResults.results.Add(result.fileName + "  ||  " + result.filePath);
-
-                if (resultListUpdateCancelHandler.IsCancellationRequested)
-                {
-                    return;
-                }
-            }
+            searchResults.results = results.Item2.GetRange(0, Math.Min(searchResultsDisplayLimit, results.Item2.Count));
+            searchResults.DoUpdate();
 
             searchResults.currentSearchQuery = SearchInput.Text;
-
-            searchResults.ResumeResultsListUpdates();
 
             Console.WriteLine("Updated results successfully");
         }

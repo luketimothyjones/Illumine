@@ -1,5 +1,5 @@
 ﻿using System;
-using System.ComponentModel;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -8,7 +8,7 @@ namespace Illumine
 {
     public partial class SearchResults : Form
     {
-        public BindingList<string> results;
+        public List<SearchResult> results;
         public string currentSearchQuery;
 
         public delegate void PassthroughKeypressEvent(KeyEventArgs e);
@@ -20,10 +20,12 @@ namespace Illumine
         {
             InitializeComponent();
 
-            results = new BindingList<string>();
-            ResultsFileList.DataSource = results;
-
             ShowOnScreen(Properties.Settings.Default.DefaultMonitor);
+
+            results = new List<SearchResult>();
+
+            ResultsFileList.Columns.Add(new ColumnHeader() { Text = "File name", Name = "FileName" });
+            ResultsFileList.Columns.Add(new ColumnHeader() { Text = "File path", Name = "FilePath" });
         }
 
         public void ShowOnScreen(int screenIndex)
@@ -45,11 +47,20 @@ namespace Illumine
             }
         }
 
-        public void PauseResultsListUpdates() {
+        public void DoUpdate()
+        {
             ResultsFileList.BeginUpdate();
-        }
 
-        public void ResumeResultsListUpdates() {
+            ResultsFileList.Items.Clear();
+            foreach (SearchResult result in results)
+            {
+                ResultsFileList.Items.Add(new ListViewItem(new string[] { result.fileName, result.filePath }));
+            }
+
+            ResultsFileList.Columns[0].Width = -2;
+            ResultsFileList.Columns[0].Width = Math.Min(ResultsFileList.Columns[0].Width + 15, 400);
+            ResultsFileList.Columns[1].Width = ResultsFileList.Width - ResultsFileList.Columns[0].Width - SystemInformation.VerticalScrollBarWidth;
+
             ResultsFileList.EndUpdate();
         }
 
@@ -78,71 +89,16 @@ namespace Illumine
             }
         }
 
-        private void SearchResults_DrawItem(object sender, DrawItemEventArgs e)
-        {
-            // Handle drawing of items in the results list, including highlighting of search query
-
-            // https://i.imgur.com/O72M3Mu.png ???
-
-            ListBox resultsListBox = (ListBox)sender;
-            this.Invoke((MethodInvoker)delegate
-            {
-                e.DrawBackground();
-                e.DrawFocusRectangle();
-
-                if (e.Index < 0)
-                {
-                    // e.Index returns -1 if an item is removed from the list
-                    return;
-                }
-
-                string resultLineString = resultsListBox.GetItemText(resultsListBox.Items[e.Index]);
-
-                if (!string.IsNullOrEmpty(currentSearchQuery))
-                {
-                    string queryMatch = Regex.Match(resultLineString, Regex.Escape(currentSearchQuery), RegexOptions.IgnoreCase).Value;
-                    string[] resultParts = Regex.Split(resultLineString, Regex.Escape(queryMatch));
-
-                    Rectangle rect = e.Bounds;
-                    int width, width2;
-
-                    for (int i = 0; i < resultParts.Length; i++)
-                    {
-                        string part = resultParts[i];
-                        if (part != "")
-                        {
-                            width = (int)e.Graphics.MeasureString(part, e.Font, e.Bounds.Width, StringFormat.GenericTypographic).Width;
-                            rect.Width = width;
-                            TextRenderer.DrawText(e.Graphics, part, e.Font, new Point(rect.X, rect.Y), resultsListBox.ForeColor);
-                            rect.X += width;
-                        }
-
-                        if (i < resultParts.Length - 1)
-                        {
-                            width2 = (int)e.Graphics.MeasureString(queryMatch, e.Font, e.Bounds.Width, StringFormat.GenericTypographic).Width;
-                            rect.Width = width2;
-                            TextRenderer.DrawText(e.Graphics, queryMatch, e.Font, new Point(rect.X, rect.Y), Color.Black, Color.White);
-                            rect.X += width2;
-                        }
-                    }
-                }
-                else
-                {
-                    TextRenderer.DrawText(e.Graphics, resultLineString, e.Font, new Point(e.Bounds.X, e.Bounds.Y), resultsListBox.ForeColor);
-                }
-            });
-        }
-
         private void ResultsFileList_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            if (ResultsFileList.SelectedIndex < 0)
+            if (ResultsFileList.SelectedIndices.Count == 0)
             {
                 return;
             }
 
-            string[] parts = ResultsFileList.SelectedItem.ToString().Split("  ||  ".ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-            string fname = parts[0];
-            string path = parts[1].TrimEnd('\\');
+            ListViewItem parts = ResultsFileList.SelectedItems[0];
+            string fname = parts.SubItems[0].Text;
+            string path = parts.SubItems[1].Text.TrimEnd('\\');
             string fullPath = path + '\\' + fname;
 
             Utils.ShellUtils.OpenPathWithDefaultApp(fullPath);
