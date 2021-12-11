@@ -41,7 +41,7 @@ namespace Illumine
             this.ResultsFileList.ForeColor = System.Drawing.Color.White;
             this.ResultsFileList.FormattingEnabled = true;
             this.ResultsFileList.ItemHeight = 25;
-            this.ResultsFileList.Location = new System.Drawing.Point(272, 401);
+            this.ResultsFileList.Location = new System.Drawing.Point(0, 0);
             this.ResultsFileList.Name = "ResultsFileList";
             this.ResultsFileList.Size = new System.Drawing.Size(1300, 550);
             this.ResultsFileList.TabIndex = 1;
@@ -54,7 +54,7 @@ namespace Illumine
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.Black;
-            this.ClientSize = new System.Drawing.Size(1920, 1080);
+            this.ClientSize = new System.Drawing.Size(1300, 550);
             this.ControlBox = false;
             this.Controls.Add(this.ResultsFileList);
             this.Cursor = System.Windows.Forms.Cursors.Arrow;
@@ -64,10 +64,9 @@ namespace Illumine
             this.Name = "SearchResults";
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "Illumine";
             this.TransparencyKey = System.Drawing.Color.Black;
-            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.SearchResults_FormClosing);
             this.VisibleChanged += new System.EventHandler(this.SearchResults_VisibleChanged);
             this.ResumeLayout(false);

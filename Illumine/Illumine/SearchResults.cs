@@ -23,9 +23,26 @@ namespace Illumine
             results = new BindingList<string>();
             ResultsFileList.DataSource = results;
 
-            // TODO :: Calculate center here
-            ResultsFileList.Top = 400;
-            ResultsFileList.Left = 300;
+            ShowOnScreen(Properties.Settings.Default.DefaultMonitor);
+        }
+
+        public void ShowOnScreen(int screenIndex)
+        {
+            Screen displayScreen = Screen.AllScreens[Math.Min(Screen.AllScreens.Length - 1, screenIndex)];
+
+            Location = new Point(displayScreen.Bounds.Location.X, displayScreen.Bounds.Location.Y);
+            Width = displayScreen.Bounds.Width;
+            Height = displayScreen.Bounds.Height;
+            WindowState = FormWindowState.Maximized;
+
+            ResultsFileList.Left = (displayScreen.Bounds.Width / 2) - (ResultsFileList.Width / 2);
+            ResultsFileList.Top = 450;
+
+            // Make sure ResultsFileList does not overrun bottom of screen
+            if (ResultsFileList.Top + ResultsFileList.Height > displayScreen.Bounds.Height)
+            {
+                ResultsFileList.Height -= (ResultsFileList.Top + ResultsFileList.Height) - displayScreen.Bounds.Height + 10;
+            }
         }
 
         public void PauseResultsListUpdates() {

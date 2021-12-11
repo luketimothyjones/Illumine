@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 namespace Illumine
@@ -8,6 +9,18 @@ namespace Illumine
         public Backdrop()
         {
             InitializeComponent();
+
+            ShowOnScreen(Properties.Settings.Default.DefaultMonitor);
+        }
+
+        public void ShowOnScreen(int screenIndex)
+        {
+            Screen displayScreen = Screen.AllScreens[Math.Min(Screen.AllScreens.Length - 1, screenIndex)];
+
+            Width = displayScreen.Bounds.Width;
+            Height = displayScreen.Bounds.Height;
+            Location = new Point(displayScreen.Bounds.Location.X, displayScreen.Bounds.Location.Y);
+            WindowState = FormWindowState.Maximized;
         }
 
         protected override CreateParams CreateParams

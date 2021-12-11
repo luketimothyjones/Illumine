@@ -162,25 +162,10 @@ namespace Illumine
             SendWindowToBack();
         }
 
-        void ShowOnScreen(int screenNumber)
+        void ShowOnScreen(int screenIndex)
         {
-            // Probably doesn't work since form is always maximized
-            Screen[] screens = Screen.AllScreens;
-
-            if (screenNumber >= 0 && screenNumber < screens.Length)
-            {
-                bool maximised = false;
-                if (WindowState == FormWindowState.Maximized)
-                {
-                    WindowState = FormWindowState.Normal;
-                    maximised = true;
-                }
-                Location = screens[screenNumber].WorkingArea.Location;
-                if (maximised)
-                {
-                    WindowState = FormWindowState.Maximized;
-                }
-            }
+            Screen screen = Screen.AllScreens[Math.Min(Screen.AllScreens.Length - 1, screenIndex)];
+            Location = new(screen.Bounds.Location.X + (screen.Bounds.Width / 2) - (Width / 2), screen.Bounds.Location.Y);
         }
 
         private void SendWindowToBack()

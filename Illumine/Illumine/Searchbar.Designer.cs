@@ -76,7 +76,7 @@ namespace Illumine
             this.Opacity = 0.9D;
             this.ShowIcon = false;
             this.ShowInTaskbar = false;
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.Manual;
             this.Text = "EverythingSearchbar";
             this.Deactivate += new System.EventHandler(this.Searchbar_Deactivate);
             this.Load += new System.EventHandler(this.Searchbar_Load);
