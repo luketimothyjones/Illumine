@@ -93,6 +93,12 @@
       <DependentUpon>Backdrop.cs</DependentUpon>
     </Compile>
     <Compile Include="Everything.cs" />
+    <Compile Include="MonitorSetter.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MonitorSetter.Designer.cs">
+      <DependentUpon>MonitorSetter.cs</DependentUpon>
+    </Compile>
     <Compile Include="WinDisplayFuncs.cs" />
     <Compile Include="ShellUtils.cs" />
     <Compile Include="KeybindSetter.cs">
@@ -122,6 +128,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="KeybindSetter.resx">
       <DependentUpon>KeybindSetter.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MonitorSetter.resx">
+      <DependentUpon>MonitorSetter.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SearchResults.resx">
       <DependentUpon>SearchResults.cs</DependentUpon>

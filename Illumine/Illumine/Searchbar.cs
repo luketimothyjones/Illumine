@@ -28,6 +28,7 @@ namespace Illumine
         {
             InitializeComponent();
 
+            // Set the monitor to be displayed on
             ShowOnScreen(Properties.Settings.Default.DefaultMonitor);
 
             // Round the corners
@@ -114,6 +115,18 @@ namespace Illumine
                 };
                 contextMenu.Items.Add(tsmiSetKeybind);
 
+                ToolStripMenuItem tsmiSetMonitor = new("Set Monitor");
+                tsmiSetMonitor.Click += (sender, e) =>
+                {
+                    MonitorSetter monitorSetter = new();
+                    monitorSetter.callbacks += (int screen) => { Properties.Settings.Default.DefaultMonitor = screen; Properties.Settings.Default.Save(); };
+                    monitorSetter.callbacks += ShowOnScreen;
+                    monitorSetter.callbacks += (int screen) => { if (searchResults != null) searchResults.ShowOnScreen(screen); };
+
+                    monitorSetter.Show();
+                };
+                contextMenu.Items.Add(tsmiSetMonitor);
+
                 contextMenu.Items.Add(new ToolStripSeparator());
 
                 ToolStripMenuItem tsmiExit = new("Exit");
@@ -126,6 +139,7 @@ namespace Illumine
                     tsmiCopy.Enabled = SearchInput.SelectionLength > 0;
                     tsmiPaste.Enabled = Clipboard.ContainsText();
                     tsmiSelectAll.Enabled = SearchInput.TextLength > 0 && SearchInput.SelectionLength < SearchInput.TextLength;
+                    tsmiSetMonitor.Enabled = Screen.AllScreens.Length > 1;
                 };
 
                 SearchInput.ContextMenuStrip = contextMenu;
