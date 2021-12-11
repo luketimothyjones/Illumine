@@ -180,7 +180,7 @@ namespace Illumine
         void ShowOnScreen(int screenIndex)
         {
             Screen screen = Screen.AllScreens[Math.Min(Screen.AllScreens.Length - 1, screenIndex)];
-            Location = new(screen.Bounds.Location.X + (screen.Bounds.Width / 2) - (Width / 2), screen.Bounds.Location.Y);
+            Location = new(screen.Bounds.Location.X + (screen.Bounds.Width / 2) - (Width / 2), screen.Bounds.Location.Y + 20);
         }
 
         private void SendWindowToBack()
