@@ -16,10 +16,9 @@ namespace Illumine
         private SearchResults searchResults = null;
         private readonly int searchResultsDisplayLimit = 150;
 
-        // We need this to be defined for proper disposal
+        private GlobalHotkeys.GlobalHotkeys showHotkey;  // We need this to be defined for proper disposal
         private Dictionary<string, int> keybind;
-        private GlobalHotkeys.GlobalHotkeys showHotkey;
-        private readonly KeybindSetter keybindSetter;
+        private KeybindSetter keybindSetter;
 
         private readonly SearchEngine searchEngine;
         private static readonly List<Keys> searchInputIgnoreKeys = new() { Keys.Left, Keys.Right, Keys.Home, Keys.End, Keys.Escape };
@@ -68,9 +67,6 @@ namespace Illumine
                 MessageBox.Show("Keybind in user settings was invalid, it has been reset to CTRL + WIN + Period (full-stop)", "Invalid keybind", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 
-            keybindSetter = new KeybindSetter();
-            keybindSetter.RegisterCallback(HotkeySetCallback);
-
             searchEngine = new SearchEngine();
         }
 
@@ -110,7 +106,12 @@ namespace Illumine
                 contextMenu.Items.Add(new ToolStripSeparator());
 
                 ToolStripMenuItem tsmiSetKeybind = new("Set Keybind");
-                tsmiSetKeybind.Click += (sender, e) => keybindSetter.Show();
+                tsmiSetKeybind.Click += (sender, e) =>
+                {
+                    keybindSetter = new KeybindSetter();
+                    keybindSetter.RegisterCallback(HotkeySetCallback);
+                    keybindSetter.Show();
+                };
                 contextMenu.Items.Add(tsmiSetKeybind);
 
                 contextMenu.Items.Add(new ToolStripSeparator());
