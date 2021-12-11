@@ -75,6 +75,7 @@ namespace Illumine
 
         private void CloseButton_Click(object sender, EventArgs e)
         {
+            callbacks.Clear();
             Close();
         }
     }
