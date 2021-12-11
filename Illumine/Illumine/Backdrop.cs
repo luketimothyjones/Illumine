@@ -34,5 +34,14 @@ namespace Illumine
                 return cp;
             }
         }
+
+        protected override void WndProc(ref Message m)
+        {
+            // Prevent backdrop from taking focus on click
+            if (m.Msg == (int)0x84)
+                m.Result = (IntPtr)(-1);
+            else
+                base.WndProc(ref m);
+        }
     }
 }
