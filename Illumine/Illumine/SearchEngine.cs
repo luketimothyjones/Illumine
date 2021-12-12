@@ -12,9 +12,9 @@ namespace Illumine
         public string extension;
         public int _distance = int.MinValue;
 
-        private static int THIS_COMES_BEFORE = -1;
-        private static int HAS_SAME_PLACE = 0;
-        private static int THIS_COMES_AFTER = 1;
+        private const int THIS_COMES_BEFORE = -1;
+        private const int HAS_SAME_PLACE = 0;
+        private const int THIS_COMES_AFTER = 1;
 
         public int CompareTo(SearchResult other)
         {
@@ -163,8 +163,8 @@ namespace Illumine
         private SearchResult[] results;
         private SpinLock everythingSpinLock;
 
-        private static readonly uint searchLimit = 10000;
-        private static readonly int displayLimit = 1000;
+        private const uint searchLimit = 10000;
+        private const int displayLimit = 1000;
 
         public SearchEngine()
         {
