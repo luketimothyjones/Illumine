@@ -124,6 +124,7 @@ namespace Illumine
 
         private void CloseButton_MouseHover(object sender, EventArgs e)
         {
+            // ToolTip won't display unless the parent window has topmost status
             TopMost = true;
         }
     }
