@@ -20,7 +20,7 @@ namespace Illumine
         private KeybindSetter keybindSetter;
 
         private readonly SearchEngine searchEngine;
-        private static readonly List<Keys> searchInputIgnoreKeys = new() { Keys.Left, Keys.Right, Keys.Home, Keys.End, Keys.Escape };
+        private static readonly List<Keys> searchInputIgnoreKeys = new() { Keys.Left, Keys.Right, Keys.Home, Keys.End };
 
         // ========
         public Searchbar()
@@ -228,9 +228,18 @@ namespace Illumine
 
         public void HandleResultsClose(object sender, EventArgs e)
         {
-            searchResults.FormClosed -= HandleResultsClose;
-            searchResults.Dispose();
-            searchResults = null;
+            HandleEscapeHotkey();
+        }
+
+        private void HandleEscapeHotkey()
+        {
+            if (searchResults is not null)
+            {
+                searchResults.FormClosed -= HandleResultsClose;
+                searchResults.Close();
+                searchResults.Dispose();
+                searchResults = null;
+            }
 
             LoseFocus();
         }
@@ -304,7 +313,7 @@ namespace Illumine
 
         protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
         {
-            if (keyData == (Keys.Escape))
+            if (keyData == Keys.Escape)
             {
                 HandleEscapeHotkey();
                 return true;
@@ -312,16 +321,14 @@ namespace Illumine
             return base.ProcessCmdKey(ref msg, keyData);
         }
 
-        private void HandleEscapeHotkey()
-        {
-            if (searchResults is not null)
-            {
-                searchResults.Close();
-            }
-        }
-
         private void SearchInput_KeyUp(object sender, KeyEventArgs e)
         {
+            if (e.KeyCode == Keys.Escape)
+            {
+                HandleEscapeHotkey();
+                return;
+            }
+
             // Users can use * rather than . if they really want to...
             if (searchInputIgnoreKeys.Contains(e.KeyCode) || SearchInput.Text == ".")
             {
