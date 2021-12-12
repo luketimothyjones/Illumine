@@ -32,6 +32,7 @@ namespace Illumine
             this.components = new System.ComponentModel.Container();
             this.ResultsFileList = new System.Windows.Forms.ListView();
             this.CloseButton = new System.Windows.Forms.Button();
+            this.ToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.SuspendLayout();
             // 
             // ResultsFileList
@@ -70,9 +71,15 @@ namespace Illumine
             this.CloseButton.Size = new System.Drawing.Size(30, 30);
             this.CloseButton.TabIndex = 5;
             this.CloseButton.Text = "✕";
+            this.ToolTip.SetToolTip(this.CloseButton, "Close Results (ESC)");
             this.CloseButton.UseVisualStyleBackColor = false;
             this.CloseButton.Click += new System.EventHandler(this.CloseButton_Click);
             this.CloseButton.MouseHover += new System.EventHandler(this.CloseButton_MouseHover);
+            // 
+            // ToolTip
+            // 
+            this.ToolTip.ForeColor = System.Drawing.SystemColors.ControlText;
+            // 
             // SearchResults
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -102,5 +109,6 @@ namespace Illumine
 
         private System.Windows.Forms.ListView ResultsFileList;
         private System.Windows.Forms.Button CloseButton;
+        private System.Windows.Forms.ToolTip ToolTip;
     }
 }

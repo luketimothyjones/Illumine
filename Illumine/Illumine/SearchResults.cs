@@ -121,5 +121,10 @@ namespace Illumine
         {
             Close();
         }
+
+        private void CloseButton_MouseHover(object sender, EventArgs e)
+        {
+            TopMost = true;
+        }
     }
 }
