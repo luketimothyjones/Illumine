@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,19 +12,33 @@ namespace Illumine
         public string extension;
         public int _distance = int.MinValue;
 
+        private static int THIS_COMES_BEFORE = -1;
+        private static int HAS_SAME_PLACE = 0;
+        private static int THIS_COMES_AFTER = 1;
+
         public int CompareTo(SearchResult other)
         {
+            if (other is null)
+            {
+                return THIS_COMES_BEFORE;
+            }
+
             if (_distance == int.MinValue)
             {
                 Console.WriteLine("WARN: Comparison run against SearchResult before distance was calculated");
-                return fileName.Length == other.fileName.Length ? 0 : (fileName.Length < other.fileName.Length ? -1 : 1);
+                return fileName.Length == other.fileName.Length ? HAS_SAME_PLACE : (fileName.Length < other.fileName.Length ? THIS_COMES_BEFORE : THIS_COMES_AFTER);
             }
-            
-            return _distance == other._distance ? 0 : (_distance < other._distance ? -1 : 1);
+
+            return _distance == other._distance ? HAS_SAME_PLACE : (_distance < other._distance ? THIS_COMES_BEFORE : THIS_COMES_AFTER);
         }
 
         public bool Equals(SearchResult other)
         {
+            if (other is null)
+            {
+                return false;
+            }
+
             if (_distance == int.MinValue)
             {
                 Console.WriteLine("WARN: Comparison run against SearchResult before distance was calculated");
@@ -38,14 +51,19 @@ namespace Illumine
 
     public static class ResultSortEngine
     {
-        public static void Sort(string search, List<SearchResult> toSort)
+        public static void Sort(string search, ref SearchResult[] toSort)
         {
             foreach (SearchResult item in toSort)
             {
+                if (item is null)
+                {
+                    break;
+                }
+
                 item._distance = DamerauLevenshteinDistance(search, item.fileName);
             }
 
-            toSort.Sort();
+            Array.Sort(toSort);
         }
 
         private static void Swap<T>(ref T arg1, ref T arg2)
@@ -136,28 +154,29 @@ namespace Illumine
 
     class SearchEngine
     {
-        public uint searchLimit = 300;
-
         // This gets passed in from EverythingSearchbar.Searchbar so that the SearchInput
         // can manage cancellation
         public CancellationTokenSource cancelationHandler = null;
 
-        public delegate void ResultsCallback(ValueTuple<long, List<SearchResult>> results);
+        public delegate void ResultsCallback(ref SearchResult[] results);
 
-        private static readonly int cacheItemDuration = 10;  // seconds
-        private readonly Dictionary<string, ValueTuple<long, List<SearchResult>>> cache;
+        private SearchResult[] results;
         private SpinLock everythingSpinLock;
+
+        private static readonly uint searchLimit = 10000;
+        private static readonly int displayLimit = 1000;
 
         public SearchEngine()
         {
-            cache = new Dictionary<string, ValueTuple<long, List<SearchResult>>> { };
             everythingSpinLock = new SpinLock();
+            results = new SearchResult[searchLimit];
         }
 
         public async void DoSearch(string searchQuery, ResultsCallback callback)
         {
             try
             {
+                // Wait to see if user presses another key
                 await Task.Delay(100, cancelationHandler.Token);
             }
             catch (TaskCanceledException)
@@ -165,13 +184,6 @@ namespace Illumine
                 return;
             }
 
-            if (cache.ContainsKey(searchQuery) && (DateTimeOffset.UtcNow.ToUnixTimeSeconds() - cache[searchQuery].Item1) <= cacheItemDuration)
-            {
-                callback(cache[searchQuery]);
-                return;
-            }
-
-            (long, List<SearchResult>) results = (DateTimeOffset.UtcNow.ToUnixTimeSeconds(), new List<SearchResult>());
             bool gotLock = false;
 
             try
@@ -185,19 +197,24 @@ namespace Illumine
                     Everything.Everything_SetMax(searchLimit);
                     Everything.Everything_SetRequestFlags(Everything.RequestSettings.FILE_NAME | Everything.RequestSettings.PATH);
                     Everything.Everything_SetSort(Everything.SortSettings.NAME_ASCENDING);
-                    Everything.Everything_SetMatchWholeWord(true);
+                    Everything.Everything_SetMatchWholeWord(false);
 
                     Everything.Everything_SetSearchW(searchQuery);
                     Everything.Everything_QueryW(true);
 
                     string fileName, filePath;
                     string[] fileNameParts;
-                    for (uint i = 0; i < Everything.Everything_GetNumResults(); i++)
+
+                    // Reset the result array size to its maximum
+                    Array.Resize(ref results, (int)searchLimit);
+
+                    int resultCount = (int)Everything.Everything_GetNumResults();
+                    for (uint i = 0; i < resultCount; i++)
                     {
                         fileName = Marshal.PtrToStringUni(Everything.Everything_GetResultFileName(i));
                         filePath = Marshal.PtrToStringUni(Everything.Everything_GetResultPath(i));
 
-                        if (fileName == null || filePath == null) {
+                        if (fileName is null || filePath is null) {
                             // One of the above functions failed for some reason
                             uint errorCode = Everything.Everything_GetLastError();
                             Console.WriteLine("Error occurred in SearchEngine.DoSearch while calling Everything: '" + Everything.StatusCodes.TranslateStatusCode(errorCode) + "'");
@@ -206,12 +223,12 @@ namespace Illumine
 
                         fileNameParts = fileName.Split('.');
 
-                        results.Item2.Add(new SearchResult()
+                        results[i] = new SearchResult()
                         {
                             fileName = fileName,
                             filePath = filePath.Length > 0 ? filePath + "\\" : "",
                             extension = string.Join(".", fileNameParts, 1, fileNameParts.Length - 1)
-                        });
+                        };
 
                         if (cancelationHandler.IsCancellationRequested)
                         {
@@ -219,13 +236,22 @@ namespace Illumine
                         }
                     }
 
+                    if (resultCount > 0)
+                    {
+                        Array.Resize(ref results, resultCount);
+                        ResultSortEngine.Sort(searchQuery, ref results);
+
+                        // Clear results that exceeds display limit
+                        // We want the full length before this to ensure the best matches
+                        int choppingPoint = Math.Min(resultCount, displayLimit);
+                        Array.Clear(results, choppingPoint, results.Length - choppingPoint);
+                    }
+
                     if (gotLock)
                     {
                         everythingSpinLock.Exit();
                         gotLock = false;
                     }
-
-                    ResultSortEngine.Sort(searchQuery, results.Item2);
 
                 }, cancelationHandler.Token);
             }
@@ -244,14 +270,21 @@ namespace Illumine
                 }
             }
 
-            cache[searchQuery] = results;
-            callback(results);
+            callback(ref results);
         }
 
-        public async void ClearSearch()
+        public void ClearSearch()
         {
+            bool gotLock = false;
+            everythingSpinLock.Enter(ref gotLock);
+
             // Free up memory allocated by Everything for the current search
-            await Task.Run(Everything.Everything_Reset);
+            Everything.Everything_Reset();
+
+            if (gotLock)
+            {
+                everythingSpinLock.Exit();
+            }
         }
     }
 }

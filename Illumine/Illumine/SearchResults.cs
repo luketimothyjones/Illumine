@@ -1,15 +1,17 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using static System.Windows.Forms.ListViewItem;
 
 namespace Illumine
 {
     public partial class SearchResults : Form
     {
-        public List<SearchResult> results;
         public string currentSearchQuery;
+        public bool HasResults
+        {
+            get { return ResultsFileList.Items.Count > 0; }
+        }
 
         public delegate void PassthroughKeypressEvent(KeyEventArgs e);
         public event PassthroughKeypressEvent KeypressPassthrough;
@@ -21,8 +23,6 @@ namespace Illumine
             InitializeComponent();
 
             ShowOnScreen(Properties.Settings.Default.DefaultMonitor);
-
-            results = new List<SearchResult>();
 
             ResultsFileList.Columns.Add(new ColumnHeader() { Text = "File name", Name = "FileName" });
             ResultsFileList.Columns.Add(new ColumnHeader() { Text = "File path", Name = "FilePath" });
@@ -47,16 +47,25 @@ namespace Illumine
             }
         }
 
-        public void DoUpdate()
+        public void DoUpdate(ref SearchResult[] results)
         {
             ResultsFileList.BeginUpdate();
 
             ResultsFileList.Items.Clear();
             foreach (SearchResult result in results)
             {
+                if (result is null)
+                {
+                    break;
+                }
+
                 ResultsFileList.Items.Add(new ListViewItem(new string[] { result.fileName, result.filePath }));
             }
 
+            // We're done with the results array, so it can be cleared
+            Array.Clear(results, 0, results.Length);
+
+            // Autosize the first column, limit it to 400px, then fill the rest of the view with the second column
             ResultsFileList.Columns[0].Width = -2;
             ResultsFileList.Columns[0].Width = Math.Min(ResultsFileList.Columns[0].Width + 15, 400);
             ResultsFileList.Columns[1].Width = ResultsFileList.Width - ResultsFileList.Columns[0].Width - SystemInformation.VerticalScrollBarWidth;
@@ -71,7 +80,7 @@ namespace Illumine
             base.OnKeyDown(e);
         }
 
-        private void SearchResults_VisibleChanged(object sender, System.EventArgs e)
+        private void SearchResults_VisibleChanged(object sender, EventArgs e)
         {
             if (Visible)
             {
@@ -87,6 +96,8 @@ namespace Illumine
                 backdrop.Close();
                 backdrop = null;
             }
+
+            ResultsFileList.Items.Clear();
         }
 
         private void ResultsFileList_MouseDoubleClick(object sender, MouseEventArgs e)
@@ -96,12 +107,9 @@ namespace Illumine
                 return;
             }
 
-            ListViewItem parts = ResultsFileList.SelectedItems[0];
-            string fname = parts.SubItems[0].Text;
-            string path = parts.SubItems[1].Text.TrimEnd('\\');
-            string fullPath = path + '\\' + fname;
-
-            Utils.ShellUtils.OpenPathWithDefaultApp(fullPath);
+            // Join the path and filename together
+            ListViewSubItemCollection item = ResultsFileList.SelectedItems[0].SubItems;
+            Utils.ShellUtils.OpenPathWithDefaultApp(item[1].Text.TrimEnd('\\') + "\\" + item[0].Text);
 
             Close();
         }

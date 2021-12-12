@@ -14,7 +14,6 @@ namespace Illumine
         // ====
         private readonly IntPtr mainWindow;
         private SearchResults searchResults = null;
-        private readonly int searchResultsDisplayLimit = 150;
 
         private GlobalHotkeys.GlobalHotkeys showHotkey;  // We need this to be defined for proper disposal
         private Dictionary<string, int> keybind;
@@ -315,7 +314,7 @@ namespace Illumine
 
         private void HandleEscapeHotkey()
         {
-            if (searchResults != null)
+            if (searchResults is not null)
             {
                 searchResults.Close();
             }
@@ -323,14 +322,15 @@ namespace Illumine
 
         private void SearchInput_KeyUp(object sender, KeyEventArgs e)
         {
-            if (searchInputIgnoreKeys.Contains(e.KeyCode))
+            // Users can use * rather than . if they really want to...
+            if (searchInputIgnoreKeys.Contains(e.KeyCode) || SearchInput.Text == ".")
             {
                 return;
             }
 
             if (SearchInput.Text != "")
             {
-                if (searchResults == null || searchResults.IsDisposed)
+                if (searchResults is null || searchResults.IsDisposed)
                 {
                     searchResults = new SearchResults();
                     searchResults.FormClosed += HandleResultsClose;
@@ -349,7 +349,7 @@ namespace Illumine
                     Activate();
                 }
 
-                if (resultListUpdateCancelHandler != null)
+                if (resultListUpdateCancelHandler is not null)
                 {
                     resultListUpdateCancelHandler.Cancel();
                 }
@@ -364,20 +364,16 @@ namespace Illumine
 
             else
             {
-                if (searchResults != null && searchResults.results.Count > 0)
+                if (searchResults is not null && searchResults.HasResults)
                 {
-                    searchResults.results.Clear();
                     searchEngine.ClearSearch();
                 }
             }
         }
 
-        public void SearchEngineCallback(ValueTuple<long, List<SearchResult>> results)
+        public void SearchEngineCallback(ref SearchResult[] results)
         {
-            searchResults.results.Clear();
-            searchResults.results = results.Item2.GetRange(0, Math.Min(searchResultsDisplayLimit, results.Item2.Count));
-            searchResults.DoUpdate();
-
+            searchResults.DoUpdate(ref results);
             searchResults.currentSearchQuery = SearchInput.Text;
 
             Console.WriteLine("Updated results successfully");
