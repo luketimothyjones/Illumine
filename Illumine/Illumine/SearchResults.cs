@@ -24,8 +24,8 @@ namespace Illumine
 
             ShowOnScreen(Properties.Settings.Default.DefaultMonitor);
 
-            ResultsFileList.Columns.Add(new ColumnHeader() { Text = "File name", Name = "FileName" });
-            ResultsFileList.Columns.Add(new ColumnHeader() { Text = "File path", Name = "FilePath" });
+            ResultsFileList.Columns.Add(new ColumnHeader() { Text = "File name", Name = "FileName", Width = 400 });
+            ResultsFileList.Columns.Add(new ColumnHeader() { Text = "File path", Name = "FilePath", Width = 800 });
         }
 
         public void ShowOnScreen(int screenIndex)
