@@ -45,6 +45,9 @@ namespace Illumine
             {
                 ResultsFileList.Height -= (ResultsFileList.Top + ResultsFileList.Height) - displayScreen.Bounds.Height + 10;
             }
+
+            CloseButton.Top = 0;
+            CloseButton.Left = displayScreen.Bounds.Width - CloseButton.Width;
         }
 
         public void DoUpdate(ref SearchResult[] results)
@@ -111,6 +114,11 @@ namespace Illumine
             ListViewSubItemCollection item = ResultsFileList.SelectedItems[0].SubItems;
             Utils.ShellUtils.OpenPathWithDefaultApp(item[1].Text.TrimEnd('\\') + "\\" + item[0].Text);
 
+            Close();
+        }
+
+        private void CloseButton_Click(object sender, EventArgs e)
+        {
             Close();
         }
     }

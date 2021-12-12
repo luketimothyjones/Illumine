@@ -29,7 +29,9 @@ namespace Illumine
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.ResultsFileList = new System.Windows.Forms.ListView();
+            this.CloseButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // ResultsFileList
@@ -52,6 +54,25 @@ namespace Illumine
             this.ResultsFileList.KeyDown += new System.Windows.Forms.KeyEventHandler(this.ResultsFileList_KeyDown);
             this.ResultsFileList.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.ResultsFileList_MouseDoubleClick);
             // 
+            // CloseButton
+            // 
+            this.CloseButton.BackColor = System.Drawing.Color.Transparent;
+            this.CloseButton.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.CloseButton.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.CloseButton.FlatAppearance.BorderSize = 0;
+            this.CloseButton.FlatAppearance.MouseDownBackColor = System.Drawing.SystemColors.HotTrack;
+            this.CloseButton.FlatAppearance.MouseOverBackColor = System.Drawing.Color.Transparent;
+            this.CloseButton.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.CloseButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.CloseButton.ForeColor = System.Drawing.SystemColors.Control;
+            this.CloseButton.Location = new System.Drawing.Point(1270, 0);
+            this.CloseButton.Name = "CloseButton";
+            this.CloseButton.Size = new System.Drawing.Size(30, 30);
+            this.CloseButton.TabIndex = 5;
+            this.CloseButton.Text = "✕";
+            this.CloseButton.UseVisualStyleBackColor = false;
+            this.CloseButton.Click += new System.EventHandler(this.CloseButton_Click);
+            this.CloseButton.MouseHover += new System.EventHandler(this.CloseButton_MouseHover);
             // SearchResults
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -59,6 +80,7 @@ namespace Illumine
             this.BackColor = System.Drawing.Color.Black;
             this.ClientSize = new System.Drawing.Size(1300, 550);
             this.ControlBox = false;
+            this.Controls.Add(this.CloseButton);
             this.Controls.Add(this.ResultsFileList);
             this.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
@@ -79,5 +101,6 @@ namespace Illumine
         #endregion
 
         private System.Windows.Forms.ListView ResultsFileList;
+        private System.Windows.Forms.Button CloseButton;
     }
 }
