@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -190,7 +191,10 @@ namespace Illumine
                 sb.AppendFormat("({0})", ext);
             }
 
-            _extensionExclusionsRe = string.Format(@"(?!\.{0})(\..+)*$", sb.ToString());
+            // [^.]* Name of the file - any characters except the start of a file extension
+            // (?!\.{0}) Extension does not match one that is excluded
+            // (\..+)* The file's extension
+            _extensionExclusionsRe = string.Format(@"[^.]*(?!\.{0})(\..+)*$", sb.ToString());
         }
 
         public async void DoSearch(string searchQuery, ResultsCallback callback)
@@ -233,7 +237,9 @@ namespace Illumine
                     else
                     {
                         Everything.Everything_SetRegex(true);
-                        Everything.Everything_SetSearchW(string.Format("^{0}{1}", searchQuery, _extensionExclusionsRe));
+
+                        // Look ahead for text matching search query; _extensionExclusionsRe makes this match anywhere in the query
+                        Everything.Everything_SetSearchW(string.Format("(?={0}){1}", Regex.Escape(searchQuery), _extensionExclusionsRe));
                     }
                     
                     Everything.Everything_QueryW(true);
