@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -168,6 +169,9 @@ namespace Illumine
         private SearchResult[] results;
         private SpinLock everythingSpinLock;
 
+        private static readonly string[] extensionExclusions = new string[] { "cab", "dll", "bin", "sys", "tmp", "temp", "dat" };
+        private readonly string _extensionExclusionsRe;
+
         private const uint searchLimit = 10000;
         private const int displayLimit = 1000;
 
@@ -175,6 +179,18 @@ namespace Illumine
         {
             everythingSpinLock = new SpinLock();
             results = new SearchResult[searchLimit];
+
+            StringBuilder sb = new();
+            foreach (string ext in extensionExclusions)
+            {
+                if (sb.Length > 0)
+                {
+                    sb.Append("|");
+                }
+                sb.AppendFormat("({0})", ext);
+            }
+
+            _extensionExclusionsRe = string.Format(@"(?!\.{0})(\..+)*$", sb.ToString());
         }
 
         public async void DoSearch(string searchQuery, ResultsCallback callback)
@@ -204,7 +220,22 @@ namespace Illumine
                     Everything.Everything_SetSort(Everything.SortSettings.NAME_ASCENDING);
                     Everything.Everything_SetMatchWholeWord(false);
 
-                    Everything.Everything_SetSearchW(searchQuery);
+                    bool hasEverythingBang = searchQuery.ToLower().StartsWith("!e");
+                    if (searchQuery.Contains(".") || hasEverythingBang)
+                    {
+                        if (hasEverythingBang)
+                        {
+                            searchQuery = searchQuery.Substring(2).TrimStart();
+                        }
+
+                        Everything.Everything_SetSearchW(searchQuery);
+                    }
+                    else
+                    {
+                        Everything.Everything_SetRegex(true);
+                        Everything.Everything_SetSearchW(string.Format("^{0}{1}", searchQuery, _extensionExclusionsRe));
+                    }
+                    
                     Everything.Everything_QueryW(true);
 
                     string fileName, filePath;
