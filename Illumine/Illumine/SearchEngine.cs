@@ -29,7 +29,19 @@ namespace Illumine
                 return fileName.Length == other.fileName.Length ? HAS_SAME_PLACE : (fileName.Length < other.fileName.Length ? THIS_COMES_BEFORE : THIS_COMES_AFTER);
             }
 
-            return _distance == other._distance ? HAS_SAME_PLACE : (_distance < other._distance ? THIS_COMES_BEFORE : THIS_COMES_AFTER);
+            if (_distance == other._distance)
+            {
+                if (fileName == other.fileName)
+                {
+                    return HAS_SAME_PLACE;
+                }
+                else
+                {
+                    return string.Compare(fileName, other.fileName);
+                }
+            }
+
+            return _distance < other._distance ? THIS_COMES_BEFORE : THIS_COMES_AFTER;
         }
 
         public bool Equals(SearchResult other)
@@ -45,7 +57,7 @@ namespace Illumine
                 return fileName == other.fileName;
             }
 
-            return _distance == other._distance;
+             return _distance == other._distance && fileName == other.fileName;
         }
     }
 
