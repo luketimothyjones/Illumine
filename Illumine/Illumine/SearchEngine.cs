@@ -26,19 +26,12 @@ namespace Illumine
             if (_distance == int.MinValue)
             {
                 Console.WriteLine("WARN: Comparison run against SearchResult before distance was calculated");
-                return fileName.Length == other.fileName.Length ? HAS_SAME_PLACE : (fileName.Length < other.fileName.Length ? THIS_COMES_BEFORE : THIS_COMES_AFTER);
+                return string.Compare(fileName, other.fileName);
             }
 
             if (_distance == other._distance)
             {
-                if (fileName == other.fileName)
-                {
-                    return HAS_SAME_PLACE;
-                }
-                else
-                {
-                    return string.Compare(fileName, other.fileName);
-                }
+                return string.Compare(fileName, other.fileName);
             }
 
             return _distance < other._distance ? THIS_COMES_BEFORE : THIS_COMES_AFTER;
