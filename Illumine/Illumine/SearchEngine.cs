@@ -171,7 +171,6 @@ namespace Illumine
         private SpinLock everythingSpinLock;
 
         private static readonly string[] extensionExclusions = new string[] { "cab", "dll", "bin", "sys", "tmp", "temp", "dat" };
-        private readonly string _extensionExclusionsRe;
 
         private const uint searchLimit = 10000;
         private const int displayLimit = 1000;
@@ -180,21 +179,6 @@ namespace Illumine
         {
             everythingSpinLock = new SpinLock();
             results = new SearchResult[searchLimit];
-
-            StringBuilder sb = new();
-            foreach (string ext in extensionExclusions)
-            {
-                if (sb.Length > 0)
-                {
-                    sb.Append("|");
-                }
-                sb.AppendFormat("({0})", ext);
-            }
-
-            // [^.]* Name of the file - any characters except the start of a file extension
-            // (?!\.{0}) Extension does not match one that is excluded
-            // (\..+)* The file's extension
-            _extensionExclusionsRe = string.Format(@"[^.]*(?!\.{0})(\..+)*$", sb.ToString());
         }
 
         public async void DoSearch(string searchQuery, ResultsCallback callback)
@@ -238,8 +222,9 @@ namespace Illumine
                     {
                         Everything.Everything_SetRegex(true);
 
-                        // Look ahead for text matching search query; _extensionExclusionsRe makes this match anywhere in the query
-                        Everything.Everything_SetSearchW(string.Format("(?={0}){1}", Regex.Escape(searchQuery), _extensionExclusionsRe));
+                        // .*{0}.* - The .* catch characters before or after the query match {0}
+                        // (?<!\.{1})$ - {1} is filled with extensions to be excluded, which is looked for after a match is found
+                        Everything.Everything_SetSearchW(string.Format(@".*{0}.*(?<!\.{1})$", Regex.Escape(searchQuery), string.Join("|", extensionExclusions)));
                     }
                     
                     Everything.Everything_QueryW(true);
