@@ -52,7 +52,7 @@ namespace Illumine
                 return fileName == other.fileName;
             }
 
-             return _distance == other._distance && fileName == other.fileName;
+            return _distance == other._distance && fileName == other.fileName;
         }
     }
 
