@@ -7,7 +7,7 @@ namespace Illumine
     public partial class KeybindSetter : Form
     {
         public HashSet<Keys> chosenKeys;
-        public delegate bool KeybindSetCallback(HashSet<Keys> keys);
+        public delegate bool KeybindSetCallback(in HashSet<Keys> keys);
 
         private readonly List<KeybindSetCallback> callbacks;
 
@@ -65,12 +65,14 @@ namespace Illumine
         {
             DoCallbacks();
             SetKeybindButton.Enabled = false;
+            KeysPressedLabel.Focus();
         }
 
         private void ResetKeybindButton_Click(object sender, EventArgs e)
         {
             chosenKeys.Clear();
             KeysPressedLabel.Text = "...";
+            KeysPressedLabel.Focus();
         }
 
         private void CloseButton_Click(object sender, EventArgs e)

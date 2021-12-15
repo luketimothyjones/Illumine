@@ -246,23 +246,27 @@ namespace Illumine
 
         #endregion
 
-        private bool HotkeySetCallback(HashSet<Keys> hotkey)
+        private bool HotkeySetCallback(in HashSet<Keys> hotkey)
         {
-            Dictionary<string, int> oldKeybind = new(keybind);
-            keybind["keys"] = 0;
-            keybind["mods"] = 0;
+            Dictionary<string, int> newKeybind = new() { { "keys", 0 }, { "mods", 0 } };
 
             foreach (Keys k in hotkey)
             {
                 // Is a modifier, needs to be converted
                 if (k == Keys.ShiftKey || k == Keys.ControlKey || k == Keys.Menu || k == Keys.LWin || k == Keys.RWin)
                 {
-                    keybind["mods"] |= GlobalHotkeys.ModifierKeysToGlobalHotkeys.Convert(k);
+                    newKeybind["mods"] |= GlobalHotkeys.ModifierKeysToGlobalHotkeys.Convert(k);
                 }
                 else
                 {
-                    keybind["keys"] |= (int)k;
+                    newKeybind["keys"] |= (int)k;
                 }
+            }
+
+            if (newKeybind["keys"] == 0)
+            {
+                // No keys were pressed
+                return false;
             }
 
             showHotkey.Unregister();
@@ -270,18 +274,19 @@ namespace Illumine
 
             try
             {
-                showHotkey = new GlobalHotkeys.GlobalHotkeys((GlobalHotkeys.Modifiers)keybind["mods"], (Keys)keybind["keys"], this, true);
+                showHotkey = new GlobalHotkeys.GlobalHotkeys((GlobalHotkeys.Modifiers)newKeybind["mods"], (Keys)newKeybind["keys"], this, true);
             }
             catch (GlobalHotkeys.GlobalHotkeysException)
             {
-                keybind = oldKeybind;
                 showHotkey = new GlobalHotkeys.GlobalHotkeys((GlobalHotkeys.Modifiers)keybind["mods"], (Keys)keybind["keys"], this, true);
                 return false;
             }
 
-            Properties.Settings.Default.KeybindKeys = keybind["keys"];
-            Properties.Settings.Default.KeybindMods = keybind["mods"];
+            Properties.Settings.Default.KeybindKeys = newKeybind["keys"];
+            Properties.Settings.Default.KeybindMods = newKeybind["mods"];
             Properties.Settings.Default.Save();
+
+            keybind = newKeybind;
 
             return true;
         }
