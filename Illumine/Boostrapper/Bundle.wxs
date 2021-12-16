@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi" xmlns:util="http://schemas.microsoft.com/wix/UtilExtension" >
+  <?define NetFx472MinRelease = 461808 ?>
+  
+  <Bundle Name="Illumine Installer" Version="1.0.0.0" Manufacturer="Luke Pflibsen-Jones" UpgradeCode="c861f76d-b570-4313-96f8-e9db21c1967e">
+    <BootstrapperApplicationRef Id="WixStandardBootstrapperApplication.RtfLicense"></BootstrapperApplicationRef>
+
+    <Chain>
+      <!--<MsiPackage Id="Illumine" Name="Illumine" SourceFile="$(var.IllumineSetup.TargetPath)"/>-->
+
+      <PackageGroupRef Id="NetFx472Web"/>
+      <PackageGroupRef Id="EverythingInstaller"/>
+    </Chain>
+  </Bundle>
+
+  <Fragment>
+    <!-- This checks WixNetFx to make sure >= .NET 4.7.2 is installed -->
+    <util:RegistrySearchRef Id="NETFRAMEWORK45"/>
+    <WixVariable Id="NetFx472RedistDetectCondition" Value="NETFRAMEWORK45 &gt;= $(var.NetFx472MinRelease)" Overridable="yes" />
+    <WixVariable Id="NetFx472RedistInstallCondition" Value="" Overridable="yes" />
+
+    <PackageGroup Id="NetFx472Web">
+      <ExePackage
+          Name="DotNET_4.7.2"
+          Id="DotNet_4.7.2"
+          PerMachine="yes"
+          Vital="yes"
+          Permanent="yes"
+          Protocol="netfx4"
+          SourceFile="sources\dotnet-4.7.2-web.exe"
+          LogPathVariable="NetFx472FullLog"
+          DetectCondition="!(wix.NetFx472RedistDetectCondition)"
+          InstallCondition="!(wix.NetFx472RedistInstallCondition)"
+          InstallCommand="/q /norestart /ChainingPackage &quot;[WixBundleName]&quot; /log &quot;[NetFx472FullLog].html&quot;"
+          RepairCommand="/q /norestart /repair /ChainingPackage &quot;[WixBundleName]&quot; /log &quot;[NetFx472FullLog].html&quot;"
+          UninstallCommand="/uninstall /q /norestart /ChainingPackage &quot;[WixBundleName]&quot; /log &quot;[NetFx472FullLog].html&quot;">
+      </ExePackage>
+    </PackageGroup>
+  </Fragment>
+
+  <Fragment>
+    <util:RegistrySearch Variable="EVERYTHINGINSTALLED" Id="EverythingInstalledSearch" Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Everything" Result="exists" Win64="yes" />
+    <PackageGroup Id="EverythingInstaller">
+      <!--
+         | NOTE: This check will wrongly succeed if there is a different program called "Everything" registered to be uninstalled.
+         | This is a kinda brittle solution, it would be better to check if Publisher = "voidtools", but I can't figured out
+         | how to do that.
+      -->
+
+      <ExePackage
+          Name="Everything_1.4.1"
+          Id="Everything_1.4.1"
+          PerMachine="yes"
+          Vital="yes"
+          Permanent="yes"
+          SourceFile="sources\everything-1.4.1.exe"
+          DetectCondition="EVERYTHINGINSTALLED" 
+          InstallCommand="/S"
+      ></ExePackage>
+    </PackageGroup>
+  </Fragment>
+</Wix>
