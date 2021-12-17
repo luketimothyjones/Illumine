@@ -1,0 +1,3 @@
+Illumine requires the program "Everything" by voidtools to search for files. This installer will automatically install it if it is not already installed.
+
+Everything's icon is an orange magnifying glass. Do not be alarmed to see it running on your system, it is perfectly safe.

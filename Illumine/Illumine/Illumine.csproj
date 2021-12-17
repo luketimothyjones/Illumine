@@ -71,6 +71,9 @@
   <PropertyGroup>
     <StartupObject>Illumine.Illumine</StartupObject>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>Magnifying-glass.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -179,6 +182,9 @@
       <Project>{4e8203f1-3eca-4845-a945-85ab31faf59b}</Project>
       <Name>GlobalHotkeys</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Magnifying-glass.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
