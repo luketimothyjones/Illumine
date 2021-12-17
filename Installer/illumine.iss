@@ -5,7 +5,7 @@
 #define MyAppPublisher "Luke Pflibsen-Jones"
 #define MyAppURL "https://github.com/luketimothyjones/Illumine"
 #define MyAppExeName "Illumine.exe"
-#define MyAppIcon "C:\Users\under\Documents\GitHub\Illumine\Illumine\Magnifying-glass.ico"
+#define MyAppIcon "C:\Users\under\Documents\GitHub\Illumine\Illumine\Illumine\Magnifying-glass.ico"
 
 [Setup]
 AppId={{A404BEE0-5B55-45CC-AD0E-8198F6B56307}
@@ -35,6 +35,7 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"
+Name: "startmenuentry" ; Description: "Start Illumine when you log in" ; GroupDescription: "Autorun"
 
 [Files]
 Source: "C:\Users\under\Documents\GitHub\Illumine\Illumine\Illumine\bin\x64\Release\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
@@ -46,7 +47,9 @@ Source: "C:\Users\under\Documents\GitHub\Illumine\Illumine\Illumine\bin\x64\Rele
 [Icons]
 Name: "{autopf64}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{#MyAppIcon}"
 Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{#MyAppIcon}"; Tasks: desktopicon
-Name: "{group}\{#MyAppName}"; Filename: "{#MyAppExeName}"; IconFilename: "{#MyAppIcon}"
+Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{#MyAppIcon}"
+
+Name: "{commonstartup}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: startmenuentry
 
 [Run]
 Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
