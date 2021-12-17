@@ -182,6 +182,10 @@
       <Project>{4e8203f1-3eca-4845-a945-85ab31faf59b}</Project>
       <Name>GlobalHotkeys</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Updater\Updater.csproj">
+      <Project>{576c7905-58dd-4fef-b518-cc7111f18e39}</Project>
+      <Name>Updater</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Magnifying-glass.ico" />
