@@ -190,4 +190,8 @@
   <PropertyGroup>
     <PreBuildEvent>copy $(SolutionDir)\Extern\Everything64.dll $(TargetDir)</PreBuildEvent>
   </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>cd $(SolutionDir)..\Installer\
+"C:\Program Files (x86)\Inno Setup 6\ISCC.exe" "illumine.iss"</PostBuildEvent>
+  </PropertyGroup>
 </Project>
