@@ -41,7 +41,7 @@ Name: "startmenuentry" ; Description: "Start Illumine when you log in" ; GroupDe
 Source: "C:\Users\under\Documents\GitHub\Illumine\Illumine\Illumine\bin\x64\Release\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\under\Documents\GitHub\Illumine\Illumine\Illumine\bin\x64\Release\Everything64.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\under\Documents\GitHub\Illumine\Illumine\Illumine\bin\x64\Release\GlobalHotkeys.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\under\Documents\GitHub\Illumine\Illumine\Illumine\bin\x64\Release\Illumine.exe.config"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\under\Documents\GitHub\Illumine\Illumine\Illumine\bin\x64\Release\{#MyAppExeName}.config"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
