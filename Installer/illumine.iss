@@ -1,16 +1,18 @@
 #include "CodeDependencies.iss"
 
+#define AppSourceFolder "C:\Users\under\Documents\GitHub\Illumine"
 #define AppName "Illumine"
-#define AppVersion "0.0.5"
+#define AppExeName "Illumine.exe"
 #define AppPublisher "Luke Pflibsen-Jones"
 #define AppURL "https://github.com/luketimothyjones/Illumine"
-#define AppExeName "Illumine.exe"
-#define AppIcon "C:\Users\under\Documents\GitHub\Illumine\Illumine\Illumine\Magnifying-glass.ico"
+#define AppVersion GetVersionNumbersString(AppSourceFolder + "\Illumine\Illumine\bin\x64\Release\Illumine.exe")
+#define AppIcon AppSourceFolder + "\Illumine\Illumine\Magnifying-glass.ico"
 
 [Setup]
 AppId={{A404BEE0-5B55-45CC-AD0E-8198F6B56307}
 AppName={#AppName}
 AppVersion={#AppVersion}
+AppVerName={#AppName} {#AppVersion}
 AppPublisher={#AppPublisher}
 AppPublisherURL={#AppURL}
 AppSupportURL={#AppURL}
@@ -18,11 +20,11 @@ AppUpdatesURL={#AppURL}
 DefaultGroupName={#AppName}
 DefaultDirName={autopf64}\{#AppName}
 DisableProgramGroupPage=yes
-LicenseFile=C:\Users\under\Documents\GitHub\Illumine\LICENSE
-InfoBeforeFile=C:\Users\under\Documents\GitHub\Illumine\Installer\Resources\BeforeInstallMessage.txt
-OutputDir=C:\Users\under\Documents\GitHub\Illumine\Installer\Compiled Output
+LicenseFile={#AppSourceFolder}\LICENSE
+InfoBeforeFile={#AppSourceFolder}\Installer\Resources\BeforeInstallMessage.txt
+OutputDir={#AppSourceFolder}\Installer\Compiled Output
 OutputBaseFilename=Illumine Setup
-SetupIconFile=C:\Users\under\Documents\GitHub\Illumine\Installer\Resources\Setup-icon.ico
+SetupIconFile={#AppSourceFolder}\Installer\Resources\Setup-icon.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -38,10 +40,10 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "startmenuentry" ; Description: "Start Illumine when you log in" ; GroupDescription: "Autorun"
 
 [Files]
-Source: "C:\Users\under\Documents\GitHub\Illumine\Illumine\Illumine\bin\x64\Release\{#AppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\under\Documents\GitHub\Illumine\Illumine\Illumine\bin\x64\Release\Everything64.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\under\Documents\GitHub\Illumine\Illumine\Illumine\bin\x64\Release\GlobalHotkeys.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\under\Documents\GitHub\Illumine\Illumine\Illumine\bin\x64\Release\{#AppExeName}.config"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#AppSourceFolder}\Illumine\Illumine\bin\x64\Release\{#AppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#AppSourceFolder}\Illumine\Illumine\bin\x64\Release\Everything64.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#AppSourceFolder}\Illumine\Illumine\bin\x64\Release\GlobalHotkeys.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "{#AppSourceFolder}\Illumine\Illumine\bin\x64\Release\{#AppExeName}.config"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
