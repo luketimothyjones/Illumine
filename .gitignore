@@ -333,3 +333,6 @@ ASALocalRun/
 # Local History for Visual Studio
 .localhistory/
 Illumine/TODO.txt
+
+# Inno Setup output
+Installer/Compiled Output/
