@@ -1,22 +1,22 @@
 #include "CodeDependencies.iss"
 
-#define MyAppName "Illumine"
-#define MyAppVersion "0.0.5"
-#define MyAppPublisher "Luke Pflibsen-Jones"
-#define MyAppURL "https://github.com/luketimothyjones/Illumine"
-#define MyAppExeName "Illumine.exe"
-#define MyAppIcon "C:\Users\under\Documents\GitHub\Illumine\Illumine\Illumine\Magnifying-glass.ico"
+#define AppName "Illumine"
+#define AppVersion "0.0.5"
+#define AppPublisher "Luke Pflibsen-Jones"
+#define AppURL "https://github.com/luketimothyjones/Illumine"
+#define AppExeName "Illumine.exe"
+#define AppIcon "C:\Users\under\Documents\GitHub\Illumine\Illumine\Illumine\Magnifying-glass.ico"
 
 [Setup]
 AppId={{A404BEE0-5B55-45CC-AD0E-8198F6B56307}
-AppName={#MyAppName}
-AppVersion={#MyAppVersion}
-AppPublisher={#MyAppPublisher}
-AppPublisherURL={#MyAppURL}
-AppSupportURL={#MyAppURL}
-AppUpdatesURL={#MyAppURL}
-DefaultGroupName={#MyAppName}
-DefaultDirName={autopf64}\{#MyAppName}
+AppName={#AppName}
+AppVersion={#AppVersion}
+AppPublisher={#AppPublisher}
+AppPublisherURL={#AppURL}
+AppSupportURL={#AppURL}
+AppUpdatesURL={#AppURL}
+DefaultGroupName={#AppName}
+DefaultDirName={autopf64}\{#AppName}
 DisableProgramGroupPage=yes
 LicenseFile=C:\Users\under\Documents\GitHub\Illumine\LICENSE
 InfoBeforeFile=C:\Users\under\Documents\GitHub\Illumine\Installer\Resources\BeforeInstallMessage.txt
@@ -38,21 +38,21 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 Name: "startmenuentry" ; Description: "Start Illumine when you log in" ; GroupDescription: "Autorun"
 
 [Files]
-Source: "C:\Users\under\Documents\GitHub\Illumine\Illumine\Illumine\bin\x64\Release\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\under\Documents\GitHub\Illumine\Illumine\Illumine\bin\x64\Release\{#AppExeName}"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\under\Documents\GitHub\Illumine\Illumine\Illumine\bin\x64\Release\Everything64.dll"; DestDir: "{app}"; Flags: ignoreversion
 Source: "C:\Users\under\Documents\GitHub\Illumine\Illumine\Illumine\bin\x64\Release\GlobalHotkeys.dll"; DestDir: "{app}"; Flags: ignoreversion
-Source: "C:\Users\under\Documents\GitHub\Illumine\Illumine\Illumine\bin\x64\Release\Illumine.exe.config"; DestDir: "{app}"; Flags: ignoreversion
+Source: "C:\Users\under\Documents\GitHub\Illumine\Illumine\Illumine\bin\x64\Release\{#AppExeName}.config"; DestDir: "{app}"; Flags: ignoreversion
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
-Name: "{autopf64}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{#MyAppIcon}"
-Name: "{autodesktop}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{#MyAppIcon}"; Tasks: desktopicon
-Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; IconFilename: "{#MyAppIcon}"
+Name: "{autopf64}\{#AppName}"; Filename: "{app}\{#AppExeName}"; IconFilename: "{#AppIcon}"
+Name: "{autodesktop}\{#AppName}"; Filename: "{app}\{#AppExeName}"; IconFilename: "{#AppIcon}"; Tasks: desktopicon
+Name: "{group}\{#AppName}"; Filename: "{app}\{#AppExeName}"; IconFilename: "{#AppIcon}"
 
-Name: "{commonstartup}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"; Tasks: startmenuentry
+Name: "{commonstartup}\{#AppName}"; Filename: "{app}\{#AppExeName}"; Tasks: startmenuentry
 
 [Run]
-Filename: "{app}\{#MyAppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(MyAppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
+Filename: "{app}\{#AppExeName}"; Description: "{cm:LaunchProgram,{#StringChange(AppName, '&', '&&')}}"; Flags: nowait postinstall skipifsilent
 
 [Code]
 procedure InitializeWizard;
