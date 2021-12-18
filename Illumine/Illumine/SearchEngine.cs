@@ -170,7 +170,7 @@ namespace Illumine
         private SearchResult[] results;
         private SpinLock everythingSpinLock;
 
-        private static readonly string[] extensionExclusions = new string[] { "cab", "dll", "bin", "sys", "tmp", "temp", "dat" };
+        private static readonly string[] extensionExclusions = new string[] { "cab", "cat", "dll", "bin", "sys", "tmp", "temp", "dat" };
 
         private const uint searchLimit = 10000;
         private const int displayLimit = 1000;
