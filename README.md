@@ -2,7 +2,7 @@
 
 #### Search for Windows that doesn't suck
 
-Currently under active development. Many, many issues are being ironed out.
+Development is currently on hold due to other projects taking priority. Many, many issues still need to be ironed out. In the meantime, I recommend checking out [PowerToys Run](https://learn.microsoft.com/en-us/windows/powertoys/run) as an alternative.
 
 The current beta [can be downloaded here](https://github.com/luketimothyjones/Illumine/releases/download/v0.0.6-beta/Illumine.Setup.exe).
 
